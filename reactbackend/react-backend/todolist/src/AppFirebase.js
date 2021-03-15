@@ -19,15 +19,13 @@ const App = () => {
     populate();
   }, []);
 
- 
-
-
   useEffect(() => {
     if (socketId>5) {
     populate();
     setSocketId("1")
     }
   }, [socketId]);
+
 
   useEffect(() => {
     let id = idOfUpdate;
@@ -47,21 +45,32 @@ const App = () => {
     itemtoupdate.update({
       completed: truth,
     }).then(() => {
-    
 
-    const socketRef = io("localhost:3000");
-    socketRef.emit("senddata", 1234567)
-    socketRef.on("senddata", function(data){
-      setSocketId(data);
-        })
-  });
+
+      setTimeout(socketIO, 500);
+       
+     
 
  
-  
   // debugger
     setIdOfUpdate(null);
     setTruth(null);
-  };
+  });
+}
+
+const socketIO = () => {
+const socketRef = io("localhost:3000");
+socketRef.emit("senddata", 1234567)
+socketRef.on("senddata", function(data){
+  setSocketId(data);
+  setTimeout(() => {
+    socketRef.on("disconnect", () => {
+      console.log(socketRef.id); 
+  }, 2000);
+    });
+});
+
+}
   // Toggle Complete
   const markComplete = (id) => {
     // console.log("First", idOfUpdate);
@@ -74,7 +83,7 @@ const App = () => {
 
           setTimeout(function() {
             setTruth(todo.completed);
-          }, 1000);
+          }, 10);
         }
         return todo;
       })
@@ -132,7 +141,8 @@ const App = () => {
    
   };
 
-  const populate = (data) => {
+  const populate = () => {
+   
     setTodos([]);
     return firebase
       .firestore()
@@ -143,6 +153,7 @@ const App = () => {
           let newData = doc.data();
 
           if (todos.indexOf(newData.id) === -1) {
+         
             setTodos((arr) => {
               return [...arr, newData];
             });
@@ -152,6 +163,7 @@ const App = () => {
           // console.log("here are all of the todos", todos);
         });
       })
+      
       .catch((e) => console.log(e));
   };
 
