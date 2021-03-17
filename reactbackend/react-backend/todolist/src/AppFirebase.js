@@ -6,25 +6,32 @@ import AddTodo from "./components/AddTodoFirebase";
 import About from "./components/pages/About";
 import firebase from "./firebase";
 import io from "socket.io-client";
+import socketIOClient from 'socket.io-client'
 
 import "./App.css";
 
+
+const socket = socketIOClient('http://localhost:3000', {
+  transports: ['websocket'],
+  autoConnect: false,
+})
+
 const App = () => {
+
+
+
+
+
+
+  
   const [todos, setTodos] = useState([]);
   const [idOfUpdate, setIdOfUpdate] = useState(null);
   const [truth, setTruth] = useState();
-  const [socketId, setSocketId] = useState(1);
+  const [socketId, setSocketId] = useState(false);
 
   useEffect(() => {
     populate();
   }, []);
-
-  useEffect(() => {
-    if (socketId>5) {
-    populate();
-    setSocketId("1")
-    }
-  }, [socketId]);
 
 
   useEffect(() => {
@@ -47,7 +54,7 @@ const App = () => {
     }).then(() => {
 
 
-      setTimeout(socketIO, 500);
+      setTimeout(socketIO, 50);
        
      
 
@@ -59,18 +66,17 @@ const App = () => {
 }
 
 const socketIO = () => {
-const socketRef = io("localhost:3000");
-socketRef.emit("senddata", 1234567)
-socketRef.on("senddata", function(data){
-  setSocketId(data);
-  setTimeout(() => {
-    socketRef.on("disconnect", () => {
-      console.log(socketRef.id); 
-  }, 2000);
+  const socketRef = io("localhost:3000");
+socketRef.emit("senddata", true)
+socketRef.on("senddata", function (data){
+  populate();
+  console.log("heeyy", data);
     });
-});
+};
 
-}
+
+
+
   // Toggle Complete
   const markComplete = (id) => {
     // console.log("First", idOfUpdate);
