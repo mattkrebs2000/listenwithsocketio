@@ -54,7 +54,7 @@ const App = () => {
     }).then(() => {
 
 
-      setTimeout(socketIO, 50);
+      setTimeout(socketIO, 1);
        
      
 
@@ -71,7 +71,9 @@ socketRef.emit("senddata", true)
 socketRef.on("senddata", function (data){
   populate();
   console.log("heeyy", data);
+  socketRef.disconnect();
     });
+    
 };
 
 

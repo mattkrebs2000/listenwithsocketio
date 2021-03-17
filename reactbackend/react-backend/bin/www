@@ -90,10 +90,13 @@ const io = socket(server);
 
 io.on("connection", socket => {
 
-  
 socket.on("senddata", body => {
   io.sockets.emit("senddata", body)
   console.log("made socket connection", socket.id, body)
+});
+
+socket.on("disconnect", () => {
+  console.log("Yo", "USER DISCONNECTED");
 });
 
 });
